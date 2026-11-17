@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Car sign-in</title>
+<style>
+  :root { --bg:#fff; --fg:#1a1a1a; --muted:#666; --box:#f2f2f2; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111; --fg:#eee; --muted:#aaa; --box:#222; } }
+  body { margin:0; padding:24px 16px; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui, sans-serif; }
+  main { max-width:520px; margin:0 auto; }
+  code { display:block; padding:12px; background:var(--box); border-radius:8px; word-break:break-all; }
+  button { margin-top:12px; padding:10px 16px; font:inherit; border-radius:8px; border:1px solid var(--muted); background:transparent; color:inherit; }
+  p.small { color:var(--muted); font-size:14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Car sign-in</h1>
+  <p id="msg">Waiting for Tesla…</p>
+  <code id="code" hidden></code>
+  <button id="copy" hidden>Copy code</button>
+  <p class="small">This page only shows the code Tesla sent back. It saves and sends nothing. The code works once and expires in minutes.</p>
+</main>
+<script>
+  const q = new URLSearchParams(location.search);
+  const code = q.get("code"), err = q.get("error");
+  const msg = document.getElementById("msg");
+  if (code) {
+    msg.textContent = "Signed in. Copy this code and paste it in the Tesla thread:";
+    const box = document.getElementById("code"); box.textContent = code; box.hidden = false;
+    const b = document.getElementById("copy"); b.hidden = false;
+    b.onclick = () => navigator.clipboard.writeText(code).then(() => b.textContent = "Copied");
+  } else if (err) {
+    msg.textContent = "Tesla said: " + err + (q.get("error_description") ? " (" + q.get("error_description") + ")" : "");
+  }
+</script>
+</body>
+</html>
